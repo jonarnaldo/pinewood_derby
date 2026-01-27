@@ -3,7 +3,17 @@ import os
 import time
 import cv2
 
+def draw_live_meter(frame, motion_count, area_threshold):
+    """Function Showing Live Meter."""
+    # 1. Draw the Live Meter (top left)
+    cv2.rectangle(frame, (10, 10), (300, 60), (0,0,0), -1) # Black background for text
+    cv2.putText(frame, f"Pixels: {motion_count}", (20, 35), 
+                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
+    cv2.putText(frame, f"Goal: >{area_threshold} (3%)", (20, 55), 
+                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (200, 200, 200), 1)
+
 def monitor_zone():
+    """Function detecting motion."""
     print("Race Monitor Active...")
     cap = cv2.VideoCapture(2)
     cap.set(cv2.CAP_PROP_FPS, 60)
@@ -19,13 +29,13 @@ def monitor_zone():
         os.makedirs(folder)
 
     # --- CALIBRATION SETTINGS ---
-    MOTION_THRESHOLD = 80 # Color change sensitivity
-    SENSITIVITY_PERCENT = 0.03 # 3% of the zone must change to trigger
+    motion_threshold = 80 # Color change sensitivity
+    sensitivity_percent = 0.03 # 3% of the zone must change to trigger
     motion_zone = (946, 83, 271, 179) # (x, y, w, h)
     x, y, w, h = motion_zone
 
     # Calculate the actual pixel threshold based on zone size
-    AREA_THRESHOLD = int((w * h) * SENSITIVITY_PERCENT)
+    area_threshold = int((w * h) * sensitivity_percent)
 
     ret, first_frame = cap.read()
     if not ret:
@@ -44,24 +54,20 @@ def monitor_zone():
         roi = gray[y:y+h, x:x+w]
 
         frame_delta = cv2.absdiff(first_roi, roi)
-        _, thresh = cv2.threshold(frame_delta, MOTION_THRESHOLD, 255, cv2.THRESH_BINARY)
+        _, thresh = cv2.threshold(frame_delta, motion_threshold, 255, cv2.THRESH_BINARY)
         motion_count = cv2.countNonZero(thresh)
 
         # --- UI & VISUAL FEEDBACK ---
-        color = (0, 0, 255) if motion_count > AREA_THRESHOLD else (0, 255, 0)
+        color = (0, 0, 255) if motion_count > area_threshold else (0, 255, 0)
         
-        # 1. Draw the Live Meter (top left)
-        cv2.rectangle(frame, (10, 10), (300, 60), (0,0,0), -1) # Black background for text
-        cv2.putText(frame, f"Pixels: {motion_count}", (20, 35), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
-        cv2.putText(frame, f"Goal: >{AREA_THRESHOLD} (3%)", (20, 55), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (200, 200, 200), 1)
+        # draw Live Meter
+        draw_live_meter(frame, motion_count, area_threshold)
 
         # 2. Draw the Motion Zone
         cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
 
         # Trigger Logic
-        if motion_count > AREA_THRESHOLD:
+        if motion_count > area_threshold:
             if not has_triggered:
                 timestamp = time.strftime("%H%M%S")
                 cv2.imwrite(os.path.join(folder, f"finish_{timestamp}.jpg"), frame)

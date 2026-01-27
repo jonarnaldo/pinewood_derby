@@ -1,7 +1,7 @@
 import cv2
 
 def get_motion_zone():
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(2)
     selected_roi = None
 
     print("Step 1: Press 's' to select your motion zone.")

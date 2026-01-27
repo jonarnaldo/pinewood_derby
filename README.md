@@ -1,3 +1,9 @@
+## Description
+
+This app uses motion sensing finish line for a Pinewood Derby
+
+## Development
+
 activate env
 
 ```

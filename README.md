@@ -1,6 +1,6 @@
 ## Description
 
-This app uses motion sensing finish line for a Pinewood Derby
+This app uses motion sensing via openCV and a webcam to determine finish line winner for a Pinewood Derby
 
 ## Development
 

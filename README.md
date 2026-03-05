@@ -1,6 +1,6 @@
 ## Description
 
-This app uses motion sensing via openCV and a webcam to determine finish line winner for a Pinewood Derby
+This app uses motion sensing via openCV and a phone camera to determine finish line winner for a Pinewood Derby. It is recommended to use a camera with at least 60fps in order to capture accurate finish line placement.
 
 ## Development
 
@@ -36,21 +36,27 @@ python3 main.py
 
 ## Using Mobile phone
 
-Install scrcpy
+you will need to install scrcpy if using phone as a camera. scrcpy is a free, open-source tool that lets you display and control your Android device from your computer — over USB or Wi-Fi. In this case, we will be using USB to reduce latency.
+
+1. Install scrcpy
 
 ```
 brew install scrcpy
 ```
 
-run this Bash command
+2. Make sure Transferring files / Aundroid Auto is selected in USB settings. Then, run this Bash command
 
 ```
 scrcpy --video-source=camera --camera-id=0 --camera-fps=60 --camera-size=1920x1080 --video-bit-rate=16M --no-audio --video-buffer=0
 ```
 
-Run OBS and start virtual camera
+3. Run OBS and start virtual camera
+   1. Add a new Source
+      1. Select Method: Window Capture
+      2. Select Window: [Scrcpy][some phone model]
+   2. Click "Start Virtual Camera"
 
-In a separate Terminal window (not in VS code) run this command to start motion detection:
+4. In a separate Terminal window (not in VS code) run this command to start motion detection:
 
 ```
 python3 main.py
@@ -64,7 +70,7 @@ you may need to install adb
 brew install --cask android-platform-tools
 ```
 
-Critical Hardware Tip for A35
+Critical Hardware Tip for Samsung A35
 Before you run the command, ensure your phone is set to Motion Smoothness: High.
 
 Go to Settings > Display.
